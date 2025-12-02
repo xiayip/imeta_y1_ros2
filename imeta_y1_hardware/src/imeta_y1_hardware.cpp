@@ -3,12 +3,15 @@
 #include <algorithm>
 #include <cctype>
 #include <chrono>
+#include <cstring>
 #include <thread>
 #include <vector>
+#include <glog/logging.h>
 
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/logging.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "ament_index_cpp/get_package_share_directory.hpp"
 
 namespace imeta_y1_hardware {
 
@@ -20,9 +23,21 @@ hardware_interface::CallbackReturn IMetaY1HW::on_init(
   // Read hardware parameters with error checking
   try {
     std::string can_interface = info.hardware_parameters.at("can_interface");
-    std::string urdf_path = info.hardware_parameters.at("urdf_path");
     int arm_end_type = std::stoi(info.hardware_parameters.at("arm_end_type")); //0: only arm, 1: gripper_T, 2: gripper_G, 3: gripper_GT
     bool enable_arm = info.hardware_parameters.at("enable_arm") == "true";
+
+    // get urdf path
+    std::string package_path =
+        ament_index_cpp::get_package_share_directory("imeta_y1_description");
+    std::string urdf_path;
+    if (arm_end_type == 0) {
+      // only load robotic arm
+      urdf_path = package_path + "/urdf/imeta_y1.urdf";
+    } else {
+      RCLCPP_ERROR(rclcpp::get_logger("IMetaY1HW"), "arm_end_type is %d , not supported",
+                  arm_end_type);
+      return CallbackReturn::ERROR;
+    }
 
     y1_sdk_interface_ = std::make_unique<imeta::y1_controller::Y1SDKInterface>(
         can_interface, urdf_path, arm_end_type, enable_arm);
@@ -31,10 +46,25 @@ hardware_interface::CallbackReturn IMetaY1HW::on_init(
 
     y1_sdk_interface_->SetArmControlMode(imeta::y1_controller::Y1SDKInterface::ControlMode::NRT_JOINT_POSITION);
 
+    for (size_t i = 1; i <= info.joints.size(); ++i) {
+      std::string joint_name = "joint" + std::to_string(i);
+      joint_names_.push_back(joint_name);
+    }
+
+    // Initialize state and command vectors with proper size
+    // This is CRITICAL - these vectors must be sized before export_state_interfaces() is called
+    size_t num_joints = joint_names_.size();
+    pos_states_.resize(num_joints, 0.0);
+    vel_states_.resize(num_joints, 0.0);
+    tau_states_.resize(num_joints, 0.0);
+    pos_commands_.resize(num_joints, 0.0);
+    // vel_commands_.resize(num_joints, 0.0);
+    // tau_commands_.resize(num_joints, 0.0);
+
     RCLCPP_INFO(rclcpp::get_logger("IMetaY1HW"), 
-                "Initialized with CAN: %s, URDF: %s, arm_end_type: %d, enable_arm: %s",
+                "Initialized with CAN: %s, URDF: %s, arm_end_type: %d, enable_arm: %s, joints: %zu",
                 can_interface.c_str(), urdf_path.c_str(), arm_end_type, 
-                enable_arm ? "true" : "false");
+                enable_arm ? "true" : "false", num_joints);
   } catch (const std::out_of_range& e) {
     RCLCPP_ERROR(rclcpp::get_logger("IMetaY1HW"), 
                  "Missing required hardware parameter: %s", e.what());
@@ -89,7 +119,23 @@ IMetaY1HW::export_command_interfaces() {
 hardware_interface::CallbackReturn IMetaY1HW::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
 
-  RCLCPP_INFO(rclcpp::get_logger("IMetaY1HW"), "IMETA Y1 activated");
+  // Read initial joint states from hardware
+  try {
+    auto pos_states = y1_sdk_interface_->GetJointPosition();
+    
+    // Initialize commands to current position to avoid sudden movements
+    for (size_t i = 0; i < pos_states.size(); ++i) {
+      pos_commands_[i] = pos_states[i];
+    }
+    
+    RCLCPP_INFO(rclcpp::get_logger("IMetaY1HW"), 
+                "IMETA Y1 activated with initial joint positions");
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(rclcpp::get_logger("IMetaY1HW"), 
+                 "Failed to read initial joint states: %s", e.what());
+    return CallbackReturn::ERROR;
+  }
+  
   return CallbackReturn::SUCCESS;
 }
 
@@ -113,9 +159,16 @@ hardware_interface::return_type IMetaY1HW::read(
     }
   }
   // get state from Y1 SDK
-  pos_states_ = y1_sdk_interface_->GetJointPosition();
-  vel_states_ = y1_sdk_interface_->GetJointVelocity();
-  tau_states_ = y1_sdk_interface_->GetJointEffort();
+  auto pos_states = y1_sdk_interface_->GetJointPosition();
+  auto vel_states = y1_sdk_interface_->GetJointVelocity();
+  auto tau_states = y1_sdk_interface_->GetJointEffort();
+
+  // Use memcpy for maximum performance - safe for POD types like double
+  // This copies data without changing vector addresses, keeping StateInterface pointers valid
+  std::memcpy(pos_states_.data(), pos_states.data(), pos_states.size() * sizeof(double));
+  std::memcpy(vel_states_.data(), vel_states.data(), vel_states.size() * sizeof(double));
+  std::memcpy(tau_states_.data(), tau_states.data(), tau_states.size() * sizeof(double));
+  
   return hardware_interface::return_type::OK;
 }
 

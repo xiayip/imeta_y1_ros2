@@ -11,6 +11,7 @@ find_package(rclcpp REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(glog REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/imeta_y1_hardware.cpp
@@ -35,6 +36,7 @@ find_library(SDK_LIB y1_sdk_${CPU_ARCH} HINTS y1_sdk/lib/${CPU_ARCH} REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
   ${SDK_LIB}
+  glog::glog
 )
 
 ament_target_dependencies(${PROJECT_NAME}

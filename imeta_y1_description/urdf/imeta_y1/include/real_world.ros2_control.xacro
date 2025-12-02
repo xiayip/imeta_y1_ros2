@@ -5,7 +5,6 @@
     <hardware>
         <plugin>imeta_y1_hardware/IMetaY1HW</plugin>
         <param name="can_interface">can0</param>
-        <param name="urdf_path">package://imeta_y1_description/urdf/imeta_y1.urdf</param>
         <!-- 0: only arm, 1: gripper_T, 2: gripper_G, 3: gripper_GT -->
         <param name="arm_end_type">0</param> 
         <param name="enable_arm">true</param>
