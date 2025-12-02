@@ -6,6 +6,7 @@
   <xacro:arg name="mock_sensor_commands" default="false"/>
   <xacro:arg name="sim_gazebo_classic" default="false"/>
   <xacro:arg name="sim_gazebo" default="false"/>
+  <xacro:arg name="sim_mujoco" default="false"/>
   <xacro:arg name="sim_isaac_sim" default="false"/>
   <!-- simulation_controllers may be provided by launch files; default to empty string -->
   <xacro:arg name="simulation_controllers" default=""/>
@@ -37,6 +38,7 @@
     mock_sensor_commands="$(arg mock_sensor_commands)"
     sim_gazebo_classic="$(arg sim_gazebo_classic)"
     sim_gazebo="$(arg sim_gazebo)"
+    sim_mujoco="$(arg sim_mujoco)"
     sim_isaac_sim="$(arg sim_isaac_sim)"
     simulation_controllers="$(arg simulation_controllers)"/>
 

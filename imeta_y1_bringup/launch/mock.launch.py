@@ -5,13 +5,13 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
-    launch_file = PathJoinSubstitution(
-        [FindPackageShare('imeta_y1_bringup'), 'launch', 'imeta_y1_bringup.launch.py']
+    imeta_y1_launch_file = PathJoinSubstitution(
+        [FindPackageShare('imeta_y1_bringup'), 'launch', 'bringup.launch.py']
     )
 
     launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(launch_file),
-        launch_arguments={'use_mock_hardware': 'false', 'sim_isaac_sim' : 'true'}.items()
+        PythonLaunchDescriptionSource(imeta_y1_launch_file),
+        launch_arguments={'use_mock_hardware': 'true'}.items()
     )
 
     return LaunchDescription([launch])

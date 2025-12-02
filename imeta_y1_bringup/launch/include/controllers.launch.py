@@ -102,6 +102,13 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
+            "sim_mujoco",
+            default_value="false",
+            description="Start robot with mujoco simulation.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
             "sim_isaac_sim",
             default_value="false",
             description="Start robot with isaac sim simulation.",
@@ -124,6 +131,7 @@ def generate_launch_description():
     mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")
     sim_gazebo_classic = LaunchConfiguration("sim_gazebo_classic")
     sim_gazebo = LaunchConfiguration("sim_gazebo")
+    sim_mujoco = LaunchConfiguration("sim_mujoco")
     sim_isaac_sim = LaunchConfiguration("sim_isaac_sim")
     real_world = LaunchConfiguration("real_world")
 
@@ -150,6 +158,9 @@ def generate_launch_description():
             " ",
             "sim_gazebo:=",
             sim_gazebo,
+            " ",
+            "sim_mujoco:=",
+            sim_mujoco,
             " ",
             "sim_isaac_sim:=",
             sim_isaac_sim,
