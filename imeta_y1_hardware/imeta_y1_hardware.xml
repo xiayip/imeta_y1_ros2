@@ -1,0 +1,9 @@
+<library path="imeta_y1_hardware">
+  <class name="imeta_y1_hardware/IMetaY1HW"
+         type="imeta_y1_hardware::IMetaY1HW"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ros2_control hardware interface for IMeta Y1.
+    </description>
+  </class>
+</library>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <ros2_control name="${name}" type="system">
+    <hardware>
+        <plugin>imeta_y1_hardware/IMetaY1HW</plugin>
+        <param name="can_interface">can0</param>
+        <param name="urdf_path">package://imeta_y1_description/urdf/imeta_y1.urdf</param>
+        <!-- 0: only arm, 1: gripper_T, 2: gripper_G, 3: gripper_GT -->
+        <param name="arm_end_type">0</param> 
+        <param name="enable_arm">true</param>
+    </hardware>
+    <joint name="joint1">
+        <command_interface name="position"/>
+        <state_interface name="position">
+        <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+    </joint>
+    <joint name="joint2">
+        <command_interface name="position"/>
+        <state_interface name="position">
+        <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+    </joint>
+    <joint name="joint3">
+        <command_interface name="position"/>
+        <state_interface name="position">
+        <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+    </joint>
+    <joint name="joint4">
+        <command_interface name="position"/>
+        <state_interface name="position">
+        <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+    </joint>
+    <joint name="joint5">
+        <command_interface name="position"/>
+        <state_interface name="position">
+        <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+    </joint>
+    <joint name="joint6">
+        <command_interface name="position"/>
+        <state_interface name="position">
+        <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+    </joint>
+
+  </ros2_control>
+</robot>

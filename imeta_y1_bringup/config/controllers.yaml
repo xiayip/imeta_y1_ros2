@@ -1,0 +1,43 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 200  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    imeta_y1_forward_position_controller:
+      type: forward_command_controller/ForwardCommandController
+
+    imeta_y1_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+imeta_y1_forward_position_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+    interface_name: position
+
+imeta_y1_trajectory_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+    state_publish_rate: 200.0 # Defaults to 50
+    action_monitor_rate: 200.0 # Defaults to 20
+    allow_partial_joints_goal: true # Defaults to false
+    constraints:
+      stopped_velocity_tolerance: 0.01 # Defaults to 0.01
+      goal_time: 0.0 # Defaults to 0.0 (start immediately)

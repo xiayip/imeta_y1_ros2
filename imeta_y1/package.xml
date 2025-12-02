@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>imeta_y1</name>
+  <version>1.0.0</version>
+  <description>Metapackage for IMeta Y1</description>
+  <maintainer email="imeta_y1_dev@enactic.ai">Enactic, Inc.</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>imeta_y1_bringup</exec_depend>
+  <exec_depend>imeta_y1_description</exec_depend>
+  <exec_depend>imeta_y1_hardware</exec_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
