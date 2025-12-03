@@ -20,7 +20,6 @@ IMetaY1HW::IMetaY1HW() = default;
 hardware_interface::CallbackReturn IMetaY1HW::on_init(
     const hardware_interface::HardwareInfo& info) {
 
-  // Read hardware parameters with error checking
   try {
     std::string can_interface = info.hardware_parameters.at("can_interface");
     int arm_end_type = std::stoi(info.hardware_parameters.at("arm_end_type")); //0: only arm, 1: gripper_T, 2: gripper_G, 3: gripper_GT
@@ -46,13 +45,12 @@ hardware_interface::CallbackReturn IMetaY1HW::on_init(
 
     y1_sdk_interface_->SetArmControlMode(imeta::y1_controller::Y1SDKInterface::ControlMode::NRT_JOINT_POSITION);
 
-    for (size_t i = 1; i <= info.joints.size(); ++i) {
-      std::string joint_name = "joint" + std::to_string(i);
+    for (const auto& joint_info : info.joints) {
+      std::string joint_name = joint_info.name;
       joint_names_.push_back(joint_name);
     }
 
     // Initialize state and command vectors with proper size
-    // This is CRITICAL - these vectors must be sized before export_state_interfaces() is called
     size_t num_joints = joint_names_.size();
     pos_states_.resize(num_joints, 0.0);
     vel_states_.resize(num_joints, 0.0);
@@ -141,9 +139,6 @@ hardware_interface::CallbackReturn IMetaY1HW::on_activate(
 
 hardware_interface::CallbackReturn IMetaY1HW::on_deactivate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
-  RCLCPP_INFO(rclcpp::get_logger("IMetaY1HW"),
-              "Deactivating IMETA Y1...");
-
   RCLCPP_INFO(rclcpp::get_logger("IMetaY1HW"), "IMETA Y1 deactivated");
   return CallbackReturn::SUCCESS;
 }
@@ -163,7 +158,6 @@ hardware_interface::return_type IMetaY1HW::read(
   auto vel_states = y1_sdk_interface_->GetJointVelocity();
   auto tau_states = y1_sdk_interface_->GetJointEffort();
 
-  // Use memcpy for maximum performance - safe for POD types like double
   // This copies data without changing vector addresses, keeping StateInterface pointers valid
   std::memcpy(pos_states_.data(), pos_states.data(), pos_states.size() * sizeof(double));
   std::memcpy(vel_states_.data(), vel_states.data(), vel_states.size() * sizeof(double));
