@@ -2,15 +2,15 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="imeta_y1" params="*origin name=imeta_y1 parent=base_link">
+  <xacro:macro name="imeta_y1" params="*origin name=imeta_y1 parent=base_link *link">
 
     <!-- imeta y1's root link -->
     <xacro:property name="root_link" value="${name}"/>
 
     <joint name="${name}_joint" type="fixed">
       <xacro:insert_block name="origin"/>
-        <parent link="${parent}"/>
-        <child link="${root_link}"/>
+      <parent link="${parent}"/>
+      <child link="${root_link}"/>
     </joint>
 
     <link name="${root_link}">
@@ -180,33 +180,12 @@
       <axis xyz="0 0 1" />
       <limit lower="-1.6" upper="1.6" effort="20" velocity="30" />
     </joint>
-    <link name="link6">
-    <inertial>
-      <origin xyz="0.031920 -0.000193 0.043758" rpy="0 0 0" />
-      <mass value="0.150000" />
-      <inertia ixx="0.000058" ixy="0.000000" ixz="0.000000" iyy="0.000027" iyz="0.000000" izz="0.000027" />
-    </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://imeta_y1_description/meshes/imeta_y1/Link6.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="1 1 1 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://imeta_y1_description/meshes/imeta_y1/Link6.STL" />
-      </geometry>
-    </collision>
-    </link>
+    <xacro:insert_block name="link" />
     <joint name="joint6" type="revolute">
-      <origin xyz="0.0235 0 0.0440000000000001" rpy="-3.14159265330655 0 0" />
+      <origin xyz="0.0235 0 0.0440000000000001" rpy="3.14159265330655 1.5707 3.14159265330655" />
       <parent link="link5" />
       <child link="link6" />
-      <axis xyz="1 0 0" />
+      <axis xyz="0 0 1" />
       <limit lower="-2.75" upper="2.75" effort="20" velocity="30" />
     </joint>
 
