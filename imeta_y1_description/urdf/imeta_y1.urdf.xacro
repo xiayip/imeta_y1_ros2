@@ -30,6 +30,23 @@
   <!-- Instantiate the imeta_y1 arm -->
   <xacro:imeta_y1 name="imeta_y1" parent="base_link">
     <origin xyz="0 0 0" rpy="0 0 0"/>
+    <link name="link6">
+      <visual>
+        <origin xyz="0 0 0" rpy="3.14159265330655 -1.5707 0.0" />
+        <geometry>
+          <mesh filename="package://imeta_y1_description/meshes/imeta_y1/Link6.STL" scale="0.1 0.1 0.1"/>
+        </geometry>
+        <material name="">
+          <color rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="3.14159265330655 0.0 3.14159265330655" />
+        <geometry>
+          <mesh filename="package://imeta_y1_description/meshes/imeta_y1/Link6.STL" scale="0.1 0.1 0.1"/>
+        </geometry>
+      </collision>
+    </link>
   </xacro:imeta_y1>
 
   <xacro:imeta_y1_ros2_control
