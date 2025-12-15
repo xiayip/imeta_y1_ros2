@@ -24,18 +24,16 @@ target_include_directories(
   y1_sdk
 )
 
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-  set(CPU_ARCH "x64")
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
-  set(CPU_ARCH "aarch64")
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+  set(LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/y1_sdk/lib/arm64/liby1_sdk_arm64.so")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
+  set(LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/y1_sdk/lib/x64/liby1_sdk_x64.so")
 else()
-  message(FATAL_ERROR "Unsupported CPU architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+  message(FATAL_ERROR "Unsupported architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 endif()
-message(STATUS "CPU architecture: ${CPU_ARCH}")
-find_library(SDK_LIB y1_sdk_${CPU_ARCH} HINTS y1_sdk/lib/${CPU_ARCH} REQUIRED)
 
 target_link_libraries(${PROJECT_NAME}
-  ${SDK_LIB}
+  ${LIB_PATH}
   glog::glog
 )
 
