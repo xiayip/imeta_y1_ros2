@@ -43,7 +43,7 @@ hardware_interface::CallbackReturn IMetaY1HW::on_init(
 
     y1_sdk_interface_->Init();
 
-    y1_sdk_interface_->SetArmControlMode(imeta::y1_controller::Y1SDKInterface::ControlMode::NRT_JOINT_POSITION);
+    y1_sdk_interface_->SetArmControlMode(imeta::y1_controller::Y1SDKInterface::ControlMode::RT_JOINT_POSITION);
 
     for (const auto& joint_info : info.joints) {
       std::string joint_name = joint_info.name;
@@ -169,12 +169,7 @@ hardware_interface::return_type IMetaY1HW::read(
 hardware_interface::return_type IMetaY1HW::write(
     const rclcpp::Time& /*time*/, const rclcpp::Duration& /*period*/) {
 
-  std::array<double, 6> joint_position;
-  for (int i = 0; i < 6; i++) {
-    joint_position[i] = pos_commands_[i];
-  }
-  int velocity_ratio = 10; // Set velocity ratio as needed
-  y1_sdk_interface_->SetArmJointPosition(joint_position, velocity_ratio);
+  y1_sdk_interface_->SetArmJointPosition(pos_commands_);
   return hardware_interface::return_type::OK;
 }
 
