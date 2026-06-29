@@ -74,7 +74,7 @@ or point LD_LIBRARY_PATH to the `y1_sdk/lib/<arch>` directory.
 Example runtime LD_LIBRARY_PATH (bash):
 
 ```bash
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/workspace/src/zwind_common/imeta_y1_hardware/y1_sdk/lib/x64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/workspace/src/zephyr_common/imeta_y1_ros2/imeta_y1_hardware/y1_sdk/lib/x64
 ```
 
 ---
